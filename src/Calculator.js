@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 
 const aligned = {
   display: 'flex',
@@ -15,41 +15,33 @@ const self = {
   margin: '20px'
 }
 
-export default class Calculator extends Component {
-  constructor () {
-    super()
-    this.state = {
-      str: '',
-      result: '',
-      selected: false
-    }
-  }
+const Calculator = () => {
 
-  handleSubmit = event => {
-    event.preventDefault()
+  const [ str, setStr ] = useState('')
+  const [ result, setResult ] = useState('')
+  const [ selected, setSelected] = useState(false)
 
-    this.setState({
-      result: ''
-    })
+  const handleSubmit = e => {
+    e.preventDefault()
 
-    let myStr = this.state.str
+    setResult( '' )
+    console.log(str)
+    let myStr = str
     let newStr = ''
     let myArray = []
 
     for (let char of myStr + ',') {
-      if (char !== ',') {
-        newStr += char
-      } else {
-        if (!isNaN(parseInt(newStr))) {
-          myArray.push(parseInt(newStr))
+        if (char !== ',') {
+            newStr += char
         } else {
-          this.setState({
-            result: 'Invalid input.'
-          })
-          return
+                if (!isNaN(parseInt(newStr))) {
+                   myArray.push(parseInt(newStr))
+                } else {
+                setResult( 'Invalid input.' )
+                }
+        return
         }
-        newStr = ''
-      }
+      newStr = '' 
     }
 
     let calculus = 0
@@ -63,13 +55,13 @@ export default class Calculator extends Component {
     }, 0)
 
     myArray.forEach(num => {
-      nn = num.toString()
+        nn = num.toString()
 
-      if (mode[nn]) {
-        mode[nn] += 1
-      } else {
-        mode[nn] = 1
-      }
+        if (mode[nn]) {
+            mode[nn] += 1
+        } else {
+            mode[nn] = 1
+        }
     })
 
     for (let kee in mode) {
@@ -78,57 +70,46 @@ export default class Calculator extends Component {
       }
     }
 
-    switch (this.state.selected) {
+    switch ( selected ) {
       case 'sum':
-                    this.setState({
-                      result: calculus
-                    })
+                    setResult( calculus )
                     break
       case 'average':
-                    this.setState({
-                    result: (calculus / myArray.length).toFixed(2)
-                    })
+                    setResult( (calculus / myArray.length ).toFixed(2) )
                     break
       case 'mode':
-                    this.setState({
-                    result: rmode
-                    })
+                    setResult( rmode )
                     break
       default:
-                    this.setState({
-                    result: 'Please select a method'
-                    })
+                    setResult( 'Please select a method' )
     }
   }
 
-  selectedValue = e => {
-    this.setState({
-      selected : e.target.value
-    })  
+  const selectedValue = e => {
+
+    setSelected( e.target.value )  
   }
 
-  handleChange = e => {
-    this.setState({
-      str: e.target.value
-    })
+  const handleChange = e => {
+    setStr( e.target.value )
   }
 
-  render () {
-    return (
+
+return (
       <div>
-        <form style={aligned} onSubmit={this.handleSubmit}>
+        <form style={aligned} onSubmit={ handleSubmit }>
           <input
             type='text'
             name='numbers'
             id='numbers'
-            onChange={this.handleChange}
+            onChange={ handleChange }
             style={self}
           />
           <select
             name='select'
             id='select'
             style={self}
-            onChange={this.selectedValue}
+            onChange={ selectedValue }
           >
             <option value='none'></option>
             <option value='sum'>sum</option>
@@ -140,9 +121,10 @@ export default class Calculator extends Component {
           </button>
         </form>
         <p id='result' style={self}>
-          {this.state.result}
+          {result}
         </p>
       </div>
     )
-  }
+
 }
+export default Calculator
